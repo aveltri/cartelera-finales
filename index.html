@@ -4,27 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light only">
-<meta name="theme-color" content="#FBF3E1">
+<meta name="theme-color" content="#F7F4FB">
 <title>Cartelera de Finales</title>
-<meta name="description" content="Finales nov/dic 2026 – Lic. en Psicología, Turno Mañana">
+<meta name="description" content="Finales nov/dic 2026 – Lic. en Psicología, 1° año, Turno Mañana">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 <style>
   :root {
     color-scheme: light;
-    --bg: #FBF3E1;
-    --text: #4a3d63;
-    --muted: #9a8fae;
-    --line: #ece2cc;
-    --lav: #e3d9f5;
-    --lav-ink: #6b55a8;
-    --pink-soft: #f6dce7;
-    --pink: #DC92B0;
-    --pink-ink: #9a4d6e;
-    --today-ink: #4a2340;
-    --done: #bdb4c8;
+    --bg: #F7F4FB;          /* fondo: blanco lavanda muy suave */
+    --text: #3b2f55;
+    --muted: #958bab;
+    --line: #e7e0f0;
+    --lav: #e6dcf7;
+    --lav-ink: #5f4a9e;
+    --pink-soft: #fbdbe8;
+    --pink-hot: #E8407F;    /* rosa intenso */
+    --pink-ink: #b8235c;
   }
   * { box-sizing: border-box; }
-  html { background: #FBF3E1; }
+  html { background: #F7F4FB; }
   body {
     margin: 0;
     background: var(--bg);
@@ -35,31 +33,48 @@
   header h1 { margin: 0 0 4px; font-size: 1.7rem; color: var(--lav-ink); }
   header p { margin: 0; color: var(--muted); }
 
+  /* Próximo final */
   .next {
     margin: 28px 0 8px;
-    padding: 4px 0 4px 16px;
-    border-left: 4px solid var(--pink);
+    padding: 6px 0 6px 16px;
+    border-left: 5px solid var(--pink-hot);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
   }
   .next small { color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-size: .75rem; }
   .next strong { display: block; font-size: 1.25rem; margin: 2px 0; }
-  .next div { color: var(--muted); }
-  .next .big { font-size: 2rem; font-weight: 700; color: var(--lav-ink); }
+  .next .when { color: var(--muted); }
+  .next .big { font-size: 2rem; font-weight: 800; color: var(--pink-hot); text-align: right; white-space: nowrap; line-height: 1.1; }
 
-  .toggle input { accent-color: var(--pink); }
-  .toggle { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .9rem; margin: 20px 0 8px; }
-
-  section.week { margin-top: 28px; }
+  /* Semanas */
+  section.week { margin-top: 32px; }
   section.week h2 {
     font-size: 1rem;
     margin: 0 0 10px;
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
   }
-  section.week h2 span { color: var(--muted); font-weight: 400; font-size: .85rem; }
+  section.week h2 .tag { margin-left: auto; color: var(--muted); font-weight: 400; font-size: .85rem; }
 
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .days { display: inline-flex; gap: 4px; }
+  .days span {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--lav);
+    background: transparent;
+    font-size: .6rem;
+    font-weight: 700;
+    color: var(--muted);
+    display: grid;
+    place-items: center;
+  }
+  .days span.on { background: var(--pink-hot); border-color: var(--pink-hot); color: #fff; }
+
+  ul { list-style: none; margin: 0; padding: 0; }
   li.exam {
     display: grid;
     grid-template-columns: 64px 1fr auto;
@@ -69,14 +84,11 @@
     border-bottom: 1px solid var(--line);
   }
   .date { text-align: center; line-height: 1.1; }
-  .date .dow { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
-  .date .day { font-size: 1.4rem; font-weight: 700; }
-  .date .mon { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
+  .date .dow, .date .mon { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
+  .date .day { font-size: 1.4rem; font-weight: 700; color: var(--lav-ink); }
   .info .name { font-weight: 600; }
   .info .meta { color: var(--muted); font-size: .85rem; }
-  .date .day { color: var(--lav-ink); }
   .left {
-    text-align: right;
     font-weight: 600;
     white-space: nowrap;
     font-size: .85rem;
@@ -86,15 +98,14 @@
     color: var(--lav-ink);
   }
   .left.soon { background: var(--pink-soft); color: var(--pink-ink); }
-  .left.today { background: var(--pink); color: var(--today-ink); }
-  li.exam.past { opacity: .5; }
-  li.exam.past .left { background: transparent; color: var(--done); font-weight: 500; }
+  .left.today { background: var(--pink-hot); color: #fff; }
 
   footer { margin-top: 40px; color: var(--muted); font-size: .8rem; }
 
   @media (max-width: 480px) {
+    .next .big { font-size: 1.5rem; }
     li.exam { grid-template-columns: 52px 1fr; }
-    .left { grid-column: 2; justify-self: start; text-align: left; }
+    .left { grid-column: 2; justify-self: start; }
   }
 </style>
 </head>
@@ -107,8 +118,6 @@
 
   <div class="next" id="next"></div>
 
-  <label class="toggle"><input type="checkbox" id="showPast"> Mostrar finales ya pasados</label>
-
   <div id="weeks"></div>
 
   <footer>Fuente: Cronograma de exámenes finales nov/dic 2026, Universidad Favaloro. Los días se calculan con la hora de Argentina.</footer>
@@ -117,17 +126,18 @@
 <script>
 // Finales de 1° año a rendir.
 const EXAMS = [
-  { year: 1, date: "2026-11-26", time: "8:00",  name: "Neurociencias" },
-  { year: 1, date: "2026-12-01", time: "11:00", name: "Procesos Básicos I" },
-  { year: 1, date: "2026-12-04", time: "12:00", name: "Epistemología" },
-  { year: 1, date: "2026-12-09", time: "8:00",  name: "Metodología de la Investigación Psicológica" },
-  { year: 1, date: "2026-12-14", time: "10:00", name: "Sociología" },
-  { year: 1, date: "2026-12-15", time: "9:00",  name: "Inglés Científico" },
-  { year: 1, date: "2026-12-18", time: "9:00",  name: "Proyecto de Lectura, Escritura y Oralidad Académicas" },
+  { date: "2026-11-26", time: "8:00",  name: "Neurociencias" },
+  { date: "2026-12-01", time: "11:00", name: "Procesos Básicos I" },
+  { date: "2026-12-04", time: "12:00", name: "Epistemología" },
+  { date: "2026-12-09", time: "8:00",  name: "Metodología de la Investigación Psicológica" },
+  { date: "2026-12-14", time: "10:00", name: "Sociología" },
+  { date: "2026-12-15", time: "9:00",  name: "Inglés Científico" },
+  { date: "2026-12-18", time: "9:00",  name: "Proyecto de Lectura, Escritura y Oralidad Académicas" },
 ];
 
 const DOW = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 const MON = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const WEEKDAY_LETTERS = ["L", "M", "M", "J", "V"];
 const MS_DAY = 86400000;
 
 // Fecha de hoy en Argentina, como "días desde epoch".
@@ -141,39 +151,38 @@ function mondayOf(n) { const dow = fromDayNum(n).getUTCDay(); return n - ((dow +
 function fmt(n) { const d = fromDayNum(n); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; }
 
 function leftLabel(diff) {
-  if (diff < 0) return { text: "Ya pasó", cls: "" };
   if (diff === 0) return { text: "¡Hoy!", cls: "today" };
   if (diff === 1) return { text: "Mañana", cls: "today" };
   return { text: `Faltan ${diff} días`, cls: diff <= 7 ? "soon" : "" };
 }
-
-let showPast = false;
 
 function render() {
   const today = todayAR();
   const exams = EXAMS
     .map(e => ({ ...e, day: dayNum(e.date) }))
     .map(e => ({ ...e, diff: e.day - today }))
+    .filter(e => e.diff >= 0)
     .sort((a, b) => a.day - b.day || a.time.localeCompare(b.time, undefined, { numeric: true }));
 
   // Próximo final
-  const upcoming = exams.find(e => e.diff >= 0);
   const nextEl = document.getElementById("next");
+  const upcoming = exams[0];
   if (upcoming) {
     const l = leftLabel(upcoming.diff);
-    nextEl.innerHTML = `<small>Próximo final</small>
-      <strong>${upcoming.name}</strong>
-      <div>${DOW[fromDayNum(upcoming.day).getUTCDay()]} ${fmt(upcoming.day)} · ${upcoming.time} hs</div>
+    nextEl.innerHTML = `
+      <div>
+        <small>Próximo final</small>
+        <strong>${upcoming.name}</strong>
+        <div class="when">${DOW[fromDayNum(upcoming.day).getUTCDay()]} ${fmt(upcoming.day)} · ${upcoming.time} hs</div>
+      </div>
       <div class="big">${l.text}</div>`;
-    nextEl.hidden = false;
   } else {
     nextEl.innerHTML = `<strong>No quedan finales por rendir 🎉</strong>`;
   }
 
-  // Agrupar por semana (lunes a domingo)
+  // Agrupar por semana (lunes a viernes)
   const weeks = new Map();
   for (const e of exams) {
-    if (!showPast && e.diff < 0) continue;
     const m = mondayOf(e.day);
     if (!weeks.has(m)) weeks.set(m, []);
     weeks.get(m).push(e);
@@ -184,16 +193,20 @@ function render() {
   const thisMonday = mondayOf(today);
   for (const [m, list] of weeks) {
     const wDiff = Math.round((m - thisMonday) / 7);
-    const tag = wDiff === 0 ? "Esta semana" : wDiff === 1 ? "La semana que viene" : wDiff > 1 ? `En ${wDiff} semanas` : "Semana pasada";
+    const tag = wDiff === 0 ? "Esta semana" : wDiff === 1 ? "La semana que viene" : `En ${wDiff} semanas`;
+    const examDays = new Set(list.map(e => e.day - m));
+    const squares = WEEKDAY_LETTERS
+      .map((letter, i) => `<span class="${examDays.has(i) ? "on" : ""}" title="${DOW[(i + 1) % 7]} ${fmt(m + i)}">${letter}</span>`)
+      .join("");
     const sec = document.createElement("section");
     sec.className = "week";
-    sec.innerHTML = `<h2>Semana del ${fmt(m)} al ${fmt(m + 4)} <span>${tag} · ${list.length} ${list.length === 1 ? "final" : "finales"}</span></h2><ul></ul>`;
+    sec.innerHTML = `<h2>Semana del ${fmt(m)} al ${fmt(m + 4)} <span class="days">${squares}</span><span class="tag">${tag} · ${list.length} ${list.length === 1 ? "final" : "finales"}</span></h2><ul></ul>`;
     const ul = sec.querySelector("ul");
     for (const e of list) {
       const d = fromDayNum(e.day);
       const l = leftLabel(e.diff);
       const li = document.createElement("li");
-      li.className = "exam" + (e.diff < 0 ? " past" : "");
+      li.className = "exam";
       li.innerHTML = `
         <div class="date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="day">${d.getUTCDate()}</div><div class="mon">${MON[d.getUTCMonth()]}</div></div>
         <div class="info"><div class="name">${e.name}</div><div class="meta">${e.time} hs</div></div>
@@ -202,10 +215,8 @@ function render() {
     }
     container.appendChild(sec);
   }
-  if (!weeks.size) container.innerHTML = `<p style="color:var(--muted)">No hay finales para mostrar.</p>`;
 }
 
-document.getElementById("showPast").onchange = e => { showPast = e.target.checked; render(); };
 render();
 // Recalcular cada hora por si la página queda abierta.
 setInterval(render, 3600000);
