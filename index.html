@@ -101,6 +101,17 @@
   .left.soon { background: var(--pink-soft); color: var(--pink-ink); }
   .left.today { background: var(--pink-hot); color: #fff; }
 
+  .actions { margin: 20px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+  .btn {
+    font: inherit; font-weight: 600; font-size: .9rem;
+    background: var(--pink-hot); color: #fff; border: 0;
+    padding: 9px 16px; border-radius: 999px; cursor: pointer;
+  }
+  .btn:hover { filter: brightness(.95); }
+  .actions small { color: var(--muted); font-size: .8rem; }
+  .gcal { color: var(--lav-ink); font-weight: 600; text-decoration: none; margin-left: 8px; }
+  .gcal:hover { text-decoration: underline; }
+
   footer { margin-top: 40px; color: var(--muted); font-size: .8rem; }
 
   @media (max-width: 560px) {
@@ -122,6 +133,11 @@
   </header>
 
   <div class="next" id="next"></div>
+
+  <div class="actions">
+    <button class="btn" id="ics">📅 Agregar todos al calendario</button>
+    <small>En Google Calendar: Configuración → Importar → elegí el archivo descargado.</small>
+  </div>
 
   <div class="table" id="weeks"></div>
 
@@ -223,13 +239,57 @@ function render() {
       li.className = "exam";
       li.innerHTML = `
         <div class="date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="day">${d.getUTCDate()}</div><div class="mon">${MON[d.getUTCMonth()]}</div></div>
-        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.time} hs</div></div>
+        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.time} hs <a class="gcal" href="${gcalLink(e)}" target="_blank" rel="noopener">+ Google Calendar</a></div></div>
         <div class="left ${l.cls}">${l.text}</div>`;
       ul.appendChild(li);
     }
     container.appendChild(sec);
   }
 }
+
+// --- Calendario ---
+const DURATION_HOURS = 2; // duración estimada de cada final
+function stamp(e, plusHours = 0) {
+  const [h, min] = e.time.split(":").map(Number);
+  const d = new Date(Date.parse(e.date + "T00:00:00Z") + ((h + plusHours) * 60 + min) * 60000);
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}00`;
+}
+function gcalLink(e) {
+  const q = new URLSearchParams({
+    action: "TEMPLATE",
+    text: `Final: ${e.name}`,
+    dates: `${stamp(e)}/${stamp(e, DURATION_HOURS)}`,
+    ctz: "America/Argentina/Buenos_Aires",
+    details: "Final 1° año – Lic. en Psicología, Universidad Favaloro",
+  });
+  return "https://calendar.google.com/calendar/render?" + q;
+}
+function downloadICS() {
+  const esc = t => t.replace(/[,;\\]/g, m => "\\" + m);
+  const now = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//cartelera-finales//ES", "CALSCALE:GREGORIAN"];
+  for (const e of EXAMS) {
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${e.date}-${e.name.replace(/\W+/g, "")}@cartelera-finales`,
+      `DTSTAMP:${now}`,
+      // Argentina = UTC-3 todo el año: se guarda en UTC.
+      `DTSTART:${stamp(e, 3)}Z`,
+      `DTEND:${stamp(e, 3 + DURATION_HOURS)}Z`,
+      `SUMMARY:${esc("Final: " + e.name)}`,
+      "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY", "DESCRIPTION:Final mañana", "END:VALARM",
+      "END:VEVENT");
+  }
+  lines.push("END:VCALENDAR");
+  const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "finales-1er-anio.ics";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+document.getElementById("ics").onclick = downloadICS;
 
 render();
 // Recalcular cada hora por si la página queda abierta.
