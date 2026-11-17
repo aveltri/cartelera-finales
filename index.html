@@ -49,7 +49,7 @@
   .next .big { font-size: 1.4rem; font-weight: 800; color: var(--pink-hot); text-align: right; white-space: nowrap; line-height: 1.1; }
 
   /* Tabla de semanas */
-  .table { margin-top: 32px; border-top: 2px solid var(--lav-ink); }
+  .table { margin-top: 48px; }
   section.week {
     display: grid;
     grid-template-columns: 170px 1fr;
@@ -103,14 +103,13 @@
 
   .actions { margin: 14px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
   .btn {
-    font: inherit; font-weight: 600; font-size: .9rem;
-    background: #1A73E8; color: #fff; border: 0;
-    padding: 9px 16px; border-radius: 999px; cursor: pointer;
+    font: inherit; font-weight: 600; font-size: .8rem;
+    background: transparent; color: #1A73E8;
+    border: 1px solid #c6dafc;
+    padding: 5px 12px; border-radius: 999px; cursor: pointer;
   }
-  .btn:hover { filter: brightness(.95); }
+  .btn:hover { background: #e8f0fe; }
   .actions small { color: var(--muted); font-size: .8rem; }
-  .gcal { color: #1A73E8; font-weight: 600; text-decoration: none; margin-left: 8px; }
-  .gcal:hover { text-decoration: underline; }
 
   footer { margin-top: 40px; color: var(--muted); font-size: .8rem; }
 
@@ -238,7 +237,7 @@ function render() {
       li.className = "exam";
       li.innerHTML = `
         <div class="date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="day">${d.getUTCDate()}</div><div class="mon">${MON[d.getUTCMonth()]}</div></div>
-        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.time} hs <a class="gcal" href="${gcalLink(e)}" target="_blank" rel="noopener">+ Google Calendar</a></div></div>
+        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.time} hs</div></div>
         <div class="left ${l.cls}">${l.text}</div>`;
       ul.appendChild(li);
     }
@@ -253,16 +252,6 @@ function stamp(e, plusHours = 0) {
   const d = new Date(Date.parse(e.date + "T00:00:00Z") + ((h + plusHours) * 60 + min) * 60000);
   const p = n => String(n).padStart(2, "0");
   return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}00`;
-}
-function gcalLink(e) {
-  const q = new URLSearchParams({
-    action: "TEMPLATE",
-    text: `Final: ${e.name}`,
-    dates: `${stamp(e)}/${stamp(e, DURATION_HOURS)}`,
-    ctz: "America/Argentina/Buenos_Aires",
-    details: "Final 1° año – Lic. en Psicología, Universidad Favaloro",
-  });
-  return "https://calendar.google.com/calendar/render?" + q;
 }
 function downloadICS() {
   const esc = t => t.replace(/[,;\\]/g, m => "\\" + m);
