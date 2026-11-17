@@ -58,9 +58,8 @@
     flex-wrap: wrap;
     gap: 6px 12px;
   }
-  section.week h2 .tag { margin-left: auto; color: var(--muted); font-weight: 400; font-size: .85rem; }
 
-  .days { display: inline-flex; gap: 4px; }
+  .days { display: inline-flex; gap: 4px; margin-left: auto; }
   .days span {
     width: 18px; height: 18px;
     border-radius: 4px;
@@ -139,6 +138,8 @@ const DOW = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 const MON = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 const WEEKDAY_LETTERS = ["L", "M", "M", "J", "V"];
 const MS_DAY = 86400000;
+// Lunes de la "semana 1" del período de finales.
+const PERIOD_START = "2026-11-23";
 
 // Fecha de hoy en Argentina, como "días desde epoch".
 function todayAR() {
@@ -149,6 +150,14 @@ function dayNum(iso) { return Math.round(Date.parse(iso + "T00:00:00Z") / MS_DAY
 function fromDayNum(n) { return new Date(n * MS_DAY); }
 function mondayOf(n) { const dow = fromDayNum(n).getUTCDay(); return n - ((dow + 6) % 7); }
 function fmt(n) { const d = fromDayNum(n); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; }
+
+// "23 al 27 nov" o "30 nov al 4 dic"
+function rangeLabel(m) {
+  const a = fromDayNum(m), b = fromDayNum(m + 4);
+  return a.getUTCMonth() === b.getUTCMonth()
+    ? `${a.getUTCDate()} al ${fmt(m + 4)}`
+    : `${fmt(m)} al ${fmt(m + 4)}`;
+}
 
 function leftLabel(diff) {
   if (diff === 0) return { text: "¡Hoy!", cls: "today" };
@@ -190,17 +199,16 @@ function render() {
 
   const container = document.getElementById("weeks");
   container.innerHTML = "";
-  const thisMonday = mondayOf(today);
+  const firstMonday = mondayOf(dayNum(PERIOD_START));
   for (const [m, list] of weeks) {
-    const wDiff = Math.round((m - thisMonday) / 7);
-    const tag = wDiff === 0 ? "Esta semana" : wDiff === 1 ? "La semana que viene" : `En ${wDiff} semanas`;
+    const weekNo = Math.round((m - firstMonday) / 7) + 1;
     const examDays = new Set(list.map(e => e.day - m));
     const squares = WEEKDAY_LETTERS
       .map((letter, i) => `<span class="${examDays.has(i) ? "on" : ""}" title="${DOW[(i + 1) % 7]} ${fmt(m + i)}">${letter}</span>`)
       .join("");
     const sec = document.createElement("section");
     sec.className = "week";
-    sec.innerHTML = `<h2>Semana del ${fmt(m)} al ${fmt(m + 4)} <span class="days">${squares}</span><span class="tag">${tag} · ${list.length} ${list.length === 1 ? "final" : "finales"}</span></h2><ul></ul>`;
+    sec.innerHTML = `<h2>Semana ${weekNo}: ${rangeLabel(m)} <span class="days">${squares}</span></h2><ul></ul>`;
     const ul = sec.querySelector("ul");
     for (const e of list) {
       const d = fromDayNum(e.day);
