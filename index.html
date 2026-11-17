@@ -132,12 +132,11 @@
 <main>
   <header>
     <h1>📚 Cartelera de Finales</h1>
-    <p>Lic. en Psicología · Turno Mañana · Nov / Dic 2026 · solo materias en verde</p>
+    <p>Lic. en Psicología · 1° año · Turno Mañana · Nov / Dic 2026</p>
   </header>
 
   <div class="next" id="next"></div>
 
-  <div class="filters" id="filters"></div>
   <label class="toggle"><input type="checkbox" id="showPast"> Mostrar finales ya pasados</label>
 
   <div id="weeks"></div>
@@ -146,9 +145,8 @@
 </main>
 
 <script>
-// Materias marcadas en verde en el cronograma oficial.
+// Finales de 1° año a rendir.
 const EXAMS = [
-  // 1° año
   { year: 1, date: "2026-11-26", time: "8:00",  name: "Neurociencias" },
   { year: 1, date: "2026-12-01", time: "11:00", name: "Procesos Básicos I" },
   { year: 1, date: "2026-12-04", time: "12:00", name: "Epistemología" },
@@ -156,25 +154,6 @@ const EXAMS = [
   { year: 1, date: "2026-12-14", time: "10:00", name: "Sociología" },
   { year: 1, date: "2026-12-15", time: "9:00",  name: "Inglés Científico" },
   { year: 1, date: "2026-12-18", time: "9:00",  name: "Proyecto de Lectura, Escritura y Oralidad Académicas" },
-  // 2° año
-  { year: 2, date: "2026-11-30", time: "10:30", name: "Psicoanálisis" },
-  { year: 2, date: "2026-12-03", time: "8:00",  name: "Psicología Evolutiva" },
-  { year: 2, date: "2026-12-09", time: "10:00", name: "Procesos Básicos II" },
-  { year: 2, date: "2026-12-14", time: "10:00", name: "Psicología Social" },
-  { year: 2, date: "2026-12-18", time: "9:00",  name: "Psicología Experimental" },
-  // 3° año
-  { year: 3, date: "2026-11-27", time: "8:00",  name: "Trastornos Neurológicos y Neurodegenerativos" },
-  { year: 3, date: "2026-11-30", time: "8:00",  name: "Evaluación Psicológica" },
-  { year: 3, date: "2026-12-02", time: "8:00",  name: "Psicología de la Salud" },
-  { year: 3, date: "2026-12-10", time: "8:00",  name: "Psicopatología" },
-  { year: 3, date: "2026-12-15", time: "10:00", name: "Psicoinmunoneuroendocrinología" },
-  // 4° año
-  { year: 4, date: "2026-11-24", time: "8:00",  name: "Psicología Educacional" },
-  { year: 4, date: "2026-11-30", time: "9:00",  name: "Psicología Clínica: Orientación Cognitivo Conductual" },
-  { year: 4, date: "2026-12-01", time: "12:00", name: "Psicofarmacología" },
-  { year: 4, date: "2026-12-03", time: "8:00",  name: "Seminario de Integración II" },
-  { year: 4, date: "2026-12-09", time: "9:00",  name: "Psicología Clínica: Orientación Sistémica" },
-  { year: 4, date: "2026-12-17", time: "10:00", name: "Evaluación Neuropsicológica" },
 ];
 
 const DOW = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
@@ -198,7 +177,6 @@ function leftLabel(diff) {
   return { text: `Faltan ${diff} días`, cls: diff <= 7 ? "soon" : "" };
 }
 
-let yearFilter = "all";
 let showPast = false;
 
 function render() {
@@ -206,7 +184,6 @@ function render() {
   const exams = EXAMS
     .map(e => ({ ...e, day: dayNum(e.date) }))
     .map(e => ({ ...e, diff: e.day - today }))
-    .filter(e => yearFilter === "all" || e.year === yearFilter)
     .sort((a, b) => a.day - b.day || a.time.localeCompare(b.time, undefined, { numeric: true }));
 
   // Próximo final
@@ -216,7 +193,7 @@ function render() {
     const l = leftLabel(upcoming.diff);
     nextEl.innerHTML = `<small>Próximo final</small>
       <strong>${upcoming.name}</strong>
-      <div>${upcoming.year}° año · ${DOW[fromDayNum(upcoming.day).getUTCDay()]} ${fmt(upcoming.day)} · ${upcoming.time} hs</div>
+      <div>${DOW[fromDayNum(upcoming.day).getUTCDay()]} ${fmt(upcoming.day)} · ${upcoming.time} hs</div>
       <div class="big">${l.text}</div>`;
     nextEl.hidden = false;
   } else {
@@ -249,7 +226,7 @@ function render() {
       li.className = "exam" + (e.diff < 0 ? " past" : "");
       li.innerHTML = `
         <div class="date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="day">${d.getUTCDate()}</div><div class="mon">${MON[d.getUTCMonth()]}</div></div>
-        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.year}° año · ${e.time} hs</div></div>
+        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.time} hs</div></div>
         <div class="left ${l.cls}">${l.text}</div>`;
       ul.appendChild(li);
     }
@@ -258,25 +235,7 @@ function render() {
   if (!weeks.size) container.innerHTML = `<p style="color:var(--muted)">No hay finales para mostrar.</p>`;
 }
 
-function buildFilters() {
-  const opts = [["all", "Todos"], [1, "1° año"], [2, "2° año"], [3, "3° año"], [4, "4° año"]];
-  const box = document.getElementById("filters");
-  for (const [val, label] of opts) {
-    const b = document.createElement("button");
-    b.textContent = label;
-    b.setAttribute("aria-pressed", String(val === yearFilter));
-    b.onclick = () => {
-      yearFilter = val;
-      box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", "false"));
-      b.setAttribute("aria-pressed", "true");
-      render();
-    };
-    box.appendChild(b);
-  }
-}
-
 document.getElementById("showPast").onchange = e => { showPast = e.target.checked; render(); };
-buildFilters();
 render();
 // Recalcular cada hora por si la página queda abierta.
 setInterval(render, 3600000);
