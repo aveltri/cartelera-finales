@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartelera de Finales</title>
+<meta name="description" content="Finales nov/dic 2026 – Lic. en Psicología, Turno Mañana">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<style>
+  :root {
+    --bg: #f6f7f4;
+    --card: #ffffff;
+    --text: #1d2420;
+    --muted: #66706a;
+    --border: #e1e5df;
+    --green: #2f7d4f;
+    --green-soft: #e6f2ea;
+    --amber: #b86a00;
+    --amber-soft: #fdf1df;
+    --red: #c0392b;
+    --red-soft: #fbe7e4;
+    --done: #a3aaa5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141816;
+      --card: #1d2320;
+      --text: #e8ece9;
+      --muted: #97a29b;
+      --border: #2c3430;
+      --green: #6cc892;
+      --green-soft: #1f3328;
+      --amber: #f0b45a;
+      --amber-soft: #3a2e1b;
+      --red: #f08a7d;
+      --red-soft: #3d2320;
+      --done: #5d6661;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { margin: 0 0 4px; font-size: 1.7rem; }
+  header p { margin: 0; color: var(--muted); }
+
+  .next {
+    margin: 24px 0 8px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--green-soft);
+    border: 1px solid var(--border);
+  }
+  .next small { color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-size: .75rem; }
+  .next strong { display: block; font-size: 1.25rem; margin: 2px 0; }
+  .next .big { font-size: 2rem; font-weight: 700; color: var(--green); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 8px; }
+  .filters button {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: #fff; }
+  @media (prefers-color-scheme: dark) {
+    .filters button[aria-pressed="true"] { color: #10261a; }
+  }
+  .toggle { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .9rem; margin-bottom: 8px; }
+
+  section.week { margin-top: 28px; }
+  section.week h2 {
+    font-size: 1rem;
+    margin: 0 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  section.week h2 span { color: var(--muted); font-weight: 400; font-size: .85rem; }
+
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  li.exam {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--green);
+    border-radius: 10px;
+  }
+  .date { text-align: center; line-height: 1.1; }
+  .date .dow { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
+  .date .day { font-size: 1.4rem; font-weight: 700; }
+  .date .mon { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
+  .info .name { font-weight: 600; }
+  .info .meta { color: var(--muted); font-size: .85rem; }
+  .left {
+    text-align: right;
+    font-weight: 700;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: var(--green-soft);
+    color: var(--green);
+    font-size: .9rem;
+  }
+  .left.soon { background: var(--amber-soft); color: var(--amber); }
+  .left.today { background: var(--red-soft); color: var(--red); }
+  li.exam.past { border-left-color: var(--done); opacity: .55; }
+  li.exam.past .left { background: transparent; color: var(--done); font-weight: 500; }
+
+  footer { margin-top: 40px; color: var(--muted); font-size: .8rem; }
+
+  @media (max-width: 480px) {
+    li.exam { grid-template-columns: 52px 1fr; }
+    .left { grid-column: 2; justify-self: start; text-align: left; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>📚 Cartelera de Finales</h1>
+    <p>Lic. en Psicología · Turno Mañana · Nov / Dic 2026 · solo materias en verde</p>
+  </header>
+
+  <div class="next" id="next"></div>
+
+  <div class="filters" id="filters"></div>
+  <label class="toggle"><input type="checkbox" id="showPast"> Mostrar finales ya pasados</label>
+
+  <div id="weeks"></div>
+
+  <footer>Fuente: Cronograma de exámenes finales nov/dic 2026, Universidad Favaloro. Los días se calculan con la hora de Argentina.</footer>
+</main>
+
+<script>
+// Materias marcadas en verde en el cronograma oficial.
+const EXAMS = [
+  // 1° año
+  { year: 1, date: "2026-11-26", time: "8:00",  name: "Neurociencias" },
+  { year: 1, date: "2026-12-01", time: "11:00", name: "Procesos Básicos I" },
+  { year: 1, date: "2026-12-04", time: "12:00", name: "Epistemología" },
+  { year: 1, date: "2026-12-09", time: "8:00",  name: "Metodología de la Investigación Psicológica" },
+  { year: 1, date: "2026-12-14", time: "10:00", name: "Sociología" },
+  { year: 1, date: "2026-12-15", time: "9:00",  name: "Inglés Científico" },
+  { year: 1, date: "2026-12-18", time: "9:00",  name: "Proyecto de Lectura, Escritura y Oralidad Académicas" },
+  // 2° año
+  { year: 2, date: "2026-11-30", time: "10:30", name: "Psicoanálisis" },
+  { year: 2, date: "2026-12-03", time: "8:00",  name: "Psicología Evolutiva" },
+  { year: 2, date: "2026-12-09", time: "10:00", name: "Procesos Básicos II" },
+  { year: 2, date: "2026-12-14", time: "10:00", name: "Psicología Social" },
+  { year: 2, date: "2026-12-18", time: "9:00",  name: "Psicología Experimental" },
+  // 3° año
+  { year: 3, date: "2026-11-27", time: "8:00",  name: "Trastornos Neurológicos y Neurodegenerativos" },
+  { year: 3, date: "2026-11-30", time: "8:00",  name: "Evaluación Psicológica" },
+  { year: 3, date: "2026-12-02", time: "8:00",  name: "Psicología de la Salud" },
+  { year: 3, date: "2026-12-10", time: "8:00",  name: "Psicopatología" },
+  { year: 3, date: "2026-12-15", time: "10:00", name: "Psicoinmunoneuroendocrinología" },
+  // 4° año
+  { year: 4, date: "2026-11-24", time: "8:00",  name: "Psicología Educacional" },
+  { year: 4, date: "2026-11-30", time: "9:00",  name: "Psicología Clínica: Orientación Cognitivo Conductual" },
+  { year: 4, date: "2026-12-01", time: "12:00", name: "Psicofarmacología" },
+  { year: 4, date: "2026-12-03", time: "8:00",  name: "Seminario de Integración II" },
+  { year: 4, date: "2026-12-09", time: "9:00",  name: "Psicología Clínica: Orientación Sistémica" },
+  { year: 4, date: "2026-12-17", time: "10:00", name: "Evaluación Neuropsicológica" },
+];
+
+const DOW = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+const MON = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+const MS_DAY = 86400000;
+
+// Fecha de hoy en Argentina, como "días desde epoch".
+function todayAR() {
+  const s = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+  return dayNum(s);
+}
+function dayNum(iso) { return Math.round(Date.parse(iso + "T00:00:00Z") / MS_DAY); }
+function fromDayNum(n) { return new Date(n * MS_DAY); }
+function mondayOf(n) { const dow = fromDayNum(n).getUTCDay(); return n - ((dow + 6) % 7); }
+function fmt(n) { const d = fromDayNum(n); return `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; }
+
+function leftLabel(diff) {
+  if (diff < 0) return { text: "Ya pasó", cls: "" };
+  if (diff === 0) return { text: "¡Hoy!", cls: "today" };
+  if (diff === 1) return { text: "Mañana", cls: "today" };
+  return { text: `Faltan ${diff} días`, cls: diff <= 7 ? "soon" : "" };
+}
+
+let yearFilter = "all";
+let showPast = false;
+
+function render() {
+  const today = todayAR();
+  const exams = EXAMS
+    .map(e => ({ ...e, day: dayNum(e.date) }))
+    .map(e => ({ ...e, diff: e.day - today }))
+    .filter(e => yearFilter === "all" || e.year === yearFilter)
+    .sort((a, b) => a.day - b.day || a.time.localeCompare(b.time, undefined, { numeric: true }));
+
+  // Próximo final
+  const upcoming = exams.find(e => e.diff >= 0);
+  const nextEl = document.getElementById("next");
+  if (upcoming) {
+    const l = leftLabel(upcoming.diff);
+    nextEl.innerHTML = `<small>Próximo final</small>
+      <strong>${upcoming.name}</strong>
+      <div>${upcoming.year}° año · ${DOW[fromDayNum(upcoming.day).getUTCDay()]} ${fmt(upcoming.day)} · ${upcoming.time} hs</div>
+      <div class="big">${l.text}</div>`;
+    nextEl.hidden = false;
+  } else {
+    nextEl.innerHTML = `<strong>No quedan finales por rendir 🎉</strong>`;
+  }
+
+  // Agrupar por semana (lunes a domingo)
+  const weeks = new Map();
+  for (const e of exams) {
+    if (!showPast && e.diff < 0) continue;
+    const m = mondayOf(e.day);
+    if (!weeks.has(m)) weeks.set(m, []);
+    weeks.get(m).push(e);
+  }
+
+  const container = document.getElementById("weeks");
+  container.innerHTML = "";
+  const thisMonday = mondayOf(today);
+  for (const [m, list] of weeks) {
+    const wDiff = Math.round((m - thisMonday) / 7);
+    const tag = wDiff === 0 ? "Esta semana" : wDiff === 1 ? "La semana que viene" : wDiff > 1 ? `En ${wDiff} semanas` : "Semana pasada";
+    const sec = document.createElement("section");
+    sec.className = "week";
+    sec.innerHTML = `<h2>Semana del ${fmt(m)} al ${fmt(m + 4)} <span>${tag} · ${list.length} ${list.length === 1 ? "final" : "finales"}</span></h2><ul></ul>`;
+    const ul = sec.querySelector("ul");
+    for (const e of list) {
+      const d = fromDayNum(e.day);
+      const l = leftLabel(e.diff);
+      const li = document.createElement("li");
+      li.className = "exam" + (e.diff < 0 ? " past" : "");
+      li.innerHTML = `
+        <div class="date"><div class="dow">${DOW[d.getUTCDay()]}</div><div class="day">${d.getUTCDate()}</div><div class="mon">${MON[d.getUTCMonth()]}</div></div>
+        <div class="info"><div class="name">${e.name}</div><div class="meta">${e.year}° año · ${e.time} hs</div></div>
+        <div class="left ${l.cls}">${l.text}</div>`;
+      ul.appendChild(li);
+    }
+    container.appendChild(sec);
+  }
+  if (!weeks.size) container.innerHTML = `<p style="color:var(--muted)">No hay finales para mostrar.</p>`;
+}
+
+function buildFilters() {
+  const opts = [["all", "Todos"], [1, "1° año"], [2, "2° año"], [3, "3° año"], [4, "4° año"]];
+  const box = document.getElementById("filters");
+  for (const [val, label] of opts) {
+    const b = document.createElement("button");
+    b.textContent = label;
+    b.setAttribute("aria-pressed", String(val === yearFilter));
+    b.onclick = () => {
+      yearFilter = val;
+      box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", "false"));
+      b.setAttribute("aria-pressed", "true");
+      render();
+    };
+    box.appendChild(b);
+  }
+}
+
+document.getElementById("showPast").onchange = e => { showPast = e.target.checked; render(); };
+buildFilters();
+render();
+// Recalcular cada hora por si la página queda abierta.
+setInterval(render, 3600000);
+</script>
+</body>
+</html>
