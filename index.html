@@ -12,14 +12,14 @@
   :root {
     color-scheme: light;
     --bg: #F7F4FB;          /* fondo: blanco lavanda muy suave */
-    --text: #3b2f55;
-    --muted: #958bab;
-    --line: #e7e0f0;
-    --lav: #e6dcf7;
-    --lav-ink: #5f4a9e;
-    --pink-soft: #fbdbe8;
-    --pink-hot: #E8407F;    /* rosa intenso */
-    --pink-ink: #b8235c;
+    --text: #22173d;
+    --muted: #6e6388;
+    --line: #d6cbe6;
+    --lav: #ddd0f5;
+    --lav-ink: #4a3590;
+    --pink-soft: #fbd3e3;
+    --pink-hot: #E0306F;    /* rosa intenso */
+    --pink-ink: #a01a4f;
   }
   * { box-sizing: border-box; }
   html { background: #F7F4FB; }
@@ -48,24 +48,26 @@
   .next .when { color: var(--muted); }
   .next .big { font-size: 2rem; font-weight: 800; color: var(--pink-hot); text-align: right; white-space: nowrap; line-height: 1.1; }
 
-  /* Semanas */
-  section.week { margin-top: 32px; }
-  section.week h2 {
-    font-size: 1rem;
-    margin: 0 0 10px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px 12px;
+  /* Tabla de semanas */
+  .table { margin-top: 32px; border-top: 2px solid var(--lav-ink); }
+  section.week {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    border-bottom: 1.5px solid var(--line);
   }
+  .wk {
+    padding: 14px 16px 14px 4px;
+    border-right: 1.5px solid var(--line);
+  }
+  .wk h2 { margin: 0; font-size: 1.05rem; color: var(--lav-ink); }
+  .wk .range { color: var(--muted); font-size: .9rem; margin: 2px 0 8px; }
 
-  .days { display: inline-flex; gap: 4px; margin-left: auto; }
+  .days { display: inline-flex; gap: 4px; }
   .days span {
-    width: 18px; height: 18px;
+    width: 20px; height: 20px;
     border-radius: 4px;
-    border: 1.5px solid var(--lav);
-    background: transparent;
-    font-size: .6rem;
+    border: 1.5px solid #c4b5e0;
+    font-size: .62rem;
     font-weight: 700;
     color: var(--muted);
     display: grid;
@@ -76,12 +78,12 @@
   ul { list-style: none; margin: 0; padding: 0; }
   li.exam {
     display: grid;
-    grid-template-columns: 64px 1fr auto;
+    grid-template-columns: 56px 1fr auto;
     gap: 14px;
     align-items: center;
-    padding: 12px 4px;
-    border-bottom: 1px solid var(--line);
+    padding: 12px 4px 12px 16px;
   }
+  li.exam + li.exam { border-top: 1px dashed var(--line); }
   .date { text-align: center; line-height: 1.1; }
   .date .dow, .date .mon { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
   .date .day { font-size: 1.4rem; font-weight: 700; color: var(--lav-ink); }
@@ -101,9 +103,13 @@
 
   footer { margin-top: 40px; color: var(--muted); font-size: .8rem; }
 
-  @media (max-width: 480px) {
+  @media (max-width: 560px) {
     .next .big { font-size: 1.5rem; }
-    li.exam { grid-template-columns: 52px 1fr; }
+    section.week { grid-template-columns: 1fr; }
+    .wk { border-right: 0; padding: 14px 4px 4px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+    .wk .range { margin: 0; }
+    .wk .days { margin-left: auto; }
+    li.exam { grid-template-columns: 48px 1fr; padding-left: 4px; }
     .left { grid-column: 2; justify-self: start; }
   }
 </style>
@@ -117,7 +123,7 @@
 
   <div class="next" id="next"></div>
 
-  <div id="weeks"></div>
+  <div class="table" id="weeks"></div>
 
   <footer>Fuente: Cronograma de exámenes finales nov/dic 2026, Universidad Favaloro. Los días se calculan con la hora de Argentina.</footer>
 </main>
@@ -208,7 +214,7 @@ function render() {
       .join("");
     const sec = document.createElement("section");
     sec.className = "week";
-    sec.innerHTML = `<h2>Semana ${weekNo}: ${rangeLabel(m)} <span class="days">${squares}</span></h2><ul></ul>`;
+    sec.innerHTML = `<div class="wk"><h2>Semana ${weekNo}</h2><div class="range">${rangeLabel(m)}</div><span class="days">${squares}</span></div><ul></ul>`;
     const ul = sec.querySelector("ul");
     for (const e of list) {
       const d = fromDayNum(e.day);
