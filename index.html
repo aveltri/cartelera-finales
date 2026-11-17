@@ -9,38 +9,30 @@
 <style>
   :root {
     --bg: #FBF3E1;
-    --card: #fffaf0;
-    --text: #2a1658;
-    --muted: #7a6a8f;
-    --border: #eadfca;
-    --accent: #401C89;
-    --accent-soft: #ece4f6;
-    --soon: #9c3d65;
-    --soon-soft: #f6dfe8;
-    --urgent: #2a1658;
-    --urgent-soft: #DC92B0;
-    --done: #b5aac2;
-    --hero-bg: #401C89;
-    --hero-text: #FBF3E1;
-    --hero-big: #DC92B0;
+    --text: #4a3d63;
+    --muted: #9a8fae;
+    --line: #ece2cc;
+    --lav: #e3d9f5;
+    --lav-ink: #6b55a8;
+    --pink-soft: #f6dce7;
+    --pink: #DC92B0;
+    --pink-ink: #9a4d6e;
+    --today-ink: #4a2340;
+    --done: #bdb4c8;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #170d2e;
-      --card: #221545;
-      --text: #FBF3E1;
-      --muted: #b4a6cc;
-      --border: #362760;
-      --accent: #DC92B0;
-      --accent-soft: #3a2560;
-      --soon: #f2bfd3;
-      --soon-soft: #4a2443;
-      --urgent: #170d2e;
-      --urgent-soft: #DC92B0;
+      --bg: #211b30;
+      --text: #f3ecdd;
+      --muted: #a99fbb;
+      --line: #342a4b;
+      --lav: #3a3058;
+      --lav-ink: #d6c9f2;
+      --pink-soft: #45303f;
+      --pink: #DC92B0;
+      --pink-ink: #f3c4d7;
+      --today-ink: #2a1630;
       --done: #5f5378;
-      --hero-bg: #401C89;
-      --hero-text: #FBF3E1;
-      --hero-big: #DC92B0;
     }
   }
   * { box-sizing: border-box; }
@@ -51,21 +43,20 @@
     font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
-  header h1 { margin: 0 0 4px; font-size: 1.7rem; }
+  header h1 { margin: 0 0 4px; font-size: 1.7rem; color: var(--lav-ink); }
   header p { margin: 0; color: var(--muted); }
 
   .next {
-    margin: 24px 0 8px;
-    padding: 18px 20px;
-    border-radius: 14px;
-    background: var(--hero-bg);
-    color: var(--hero-text);
+    margin: 28px 0 8px;
+    padding: 4px 0 4px 16px;
+    border-left: 4px solid var(--pink);
   }
-  .next small { color: var(--hero-text); opacity: .75; text-transform: uppercase; letter-spacing: .05em; font-size: .75rem; }
+  .next small { color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-size: .75rem; }
   .next strong { display: block; font-size: 1.25rem; margin: 2px 0; }
-  .next .big { font-size: 2rem; font-weight: 700; color: var(--hero-big); }
+  .next div { color: var(--muted); }
+  .next .big { font-size: 2rem; font-weight: 700; color: var(--lav-ink); }
 
-  .toggle input { accent-color: var(--accent); }
+  .toggle input { accent-color: var(--pink); }
   .toggle { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .9rem; margin: 20px 0 8px; }
 
   section.week { margin-top: 28px; }
@@ -85,11 +76,8 @@
     grid-template-columns: 64px 1fr auto;
     gap: 14px;
     align-items: center;
-    padding: 12px 14px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: 10px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line);
   }
   .date { text-align: center; line-height: 1.1; }
   .date .dow { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
@@ -97,19 +85,20 @@
   .date .mon { font-size: .72rem; text-transform: uppercase; color: var(--muted); }
   .info .name { font-weight: 600; }
   .info .meta { color: var(--muted); font-size: .85rem; }
+  .date .day { color: var(--lav-ink); }
   .left {
     text-align: right;
-    font-weight: 700;
+    font-weight: 600;
     white-space: nowrap;
-    padding: 4px 10px;
-    border-radius: 8px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-size: .9rem;
+    font-size: .85rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--lav);
+    color: var(--lav-ink);
   }
-  .left.soon { background: var(--soon-soft); color: var(--soon); }
-  .left.today { background: var(--urgent-soft); color: var(--urgent); }
-  li.exam.past { border-left-color: var(--done); opacity: .55; }
+  .left.soon { background: var(--pink-soft); color: var(--pink-ink); }
+  .left.today { background: var(--pink); color: var(--today-ink); }
+  li.exam.past { opacity: .5; }
   li.exam.past .left { background: transparent; color: var(--done); font-weight: 500; }
 
   footer { margin-top: 40px; color: var(--muted); font-size: .8rem; }
