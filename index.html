@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#FBF3E1">
 <title>Cartelera de Finales</title>
 <meta name="description" content="Finales nov/dic 2026 – Lic. en Psicología, Turno Mañana">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 <style>
   :root {
+    color-scheme: light;
     --bg: #FBF3E1;
     --text: #4a3d63;
     --muted: #9a8fae;
@@ -20,22 +23,8 @@
     --today-ink: #4a2340;
     --done: #bdb4c8;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #211b30;
-      --text: #f3ecdd;
-      --muted: #a99fbb;
-      --line: #342a4b;
-      --lav: #3a3058;
-      --lav-ink: #d6c9f2;
-      --pink-soft: #45303f;
-      --pink: #DC92B0;
-      --pink-ink: #f3c4d7;
-      --today-ink: #2a1630;
-      --done: #5f5378;
-    }
-  }
   * { box-sizing: border-box; }
+  html { background: #FBF3E1; }
   body {
     margin: 0;
     background: var(--bg);
